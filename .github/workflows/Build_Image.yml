@@ -17,10 +17,7 @@ jobs:
     - name: Set up build dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y \
-          coreutils quilt parted qemu-user-static debootstrap zerofree zip \
-          dosfstools libarchive-tools libcap2-bin grep rsync xz-utils file \
-          git curl bc qemu-utils kpartx gpg pigz
+        sudo xargs -a depends apt-get install -y
 
     - name: Export secret to config file
       run: echo "FIRST_USER_PASS=${{ secrets.PI_USER_PASSWORD }}" > config
