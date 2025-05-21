@@ -11,22 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up dependencies
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up build dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install coreutils quilt parted qemu-user-static debootstrap zerofree zip dosfstools libarchive-tools libcap2-bin grep rsync xz-utils file git curl bc qemu-utils kpartx gpg pigz
-        
-    - name: Export secret to build context
-      run: echo "FIRST_USER_PASS=${{ secrets.PI_USER_PASSWORD }}" >> config
-      
+        sudo apt-get install -y \
+          coreutils quilt parted qemu-user-static debootstrap zerofree zip \
+          dosfstools libarchive-tools libcap2-bin grep rsync xz-utils file \
+          git curl bc qemu-utils kpartx gpg pigz
+
+    - name: Export secret to config file
+      run: echo "FIRST_USER_PASS=${{ secrets.PI_USER_PASSWORD }}" > config
+
     - name: Run build script
       run: |
-        cd ${{ github.workspace }}
-        sudo chmod +x ./build.sh
+        chmod +x ./build.sh
         sudo ./build.sh
 
-    - name: Upload Artifact
+    - name: Upload image artifact
       uses: actions/upload-artifact@v4
       with:
         name: Raspberry-Pi-image
-        path: ${{ github.workspace }}/deploy/*.zip
+        path: "deploy/*.zip"
